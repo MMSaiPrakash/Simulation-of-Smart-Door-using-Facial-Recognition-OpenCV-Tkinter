@@ -2,7 +2,9 @@ import cv2,os
 import numpy as np
 from PIL import Image
 from Tkinter import *
+import time
 
+lastseenMM=0
 
 path = os.path.dirname(os.path.abspath(__file__))
 face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
@@ -23,7 +25,8 @@ while True:
         nbr_predicted, conf = recognizer.predict(gray[y:y+h,x:x+w])
         cv2.rectangle(frame,(x-50,y-50),(x+w+50,y+h+50),(0,255,0),2)
         if(nbr_predicted==0 and conf<=63):
-             tag='MM'
+            tag='MM'
+            lastseenMM=time.asctime(time.localtime(time.time()))
         else:
             tag='unknown'
         cv2.putText(frame,tag, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 0.6,(255,255,255),2)
@@ -50,8 +53,11 @@ while True:
         c.pack()
         door = c.create_rectangle(120,20,250,250,
                                   outline="white", fill=color, width=10)
+        l3 = Label(window,text="Last Seen MM at:"+str(lastseenMM),
+                   font=("Times New Roman",10))
+        l3.pack()
 
-        window.after(1000, lambda: window.destroy())
+        window.after(2000, lambda: window.destroy())
         window.mainloop()
 
     cv2.imshow('frame',frame)
